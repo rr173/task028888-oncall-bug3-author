@@ -30,6 +30,13 @@ func Build(req Request) (*Schedule, error) {
 	}
 
 	n := len(req.Roster)
+	seen := make(map[string]bool, n)
+	for i, eng := range req.Roster {
+		if seen[eng] {
+			return nil, fmt.Errorf("duplicate roster engineer %q at index %d", eng, i)
+		}
+		seen[eng] = true
+	}
 	if n > 0 && (req.StartIndex < 0 || req.StartIndex >= n) {
 		return nil, fmt.Errorf("start index %d out of range [0,%d)", req.StartIndex, n)
 	}
